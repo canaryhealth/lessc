@@ -25,8 +25,8 @@ test_dependencies = [
 ]
 
 dependencies = [
-  'distribute           >= 0.6.24',
-  'asset                >= 0.6',
+  'asset                >= 0.6.10',
+  'six                  >= 1.6.0',
 ]
 
 classifiers = [
