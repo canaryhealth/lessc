@@ -1,1 +1,2 @@
 include *.txt *.cfg *.rst
+graft lessc/res
