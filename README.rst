@@ -28,7 +28,7 @@ Installation
 
 .. code:: bash
 
-  $ npm install lessc
+  $ npm install less
   $ export PATH="`pwd`/node_modules/.bin:$PATH"
   $ pip install lessc
 
