@@ -1,4 +1,4 @@
 # -*- coding: utf-8 -*-
 
-PROJECT = lessc
+PKGNAME = lessc
 include Makefile.python
