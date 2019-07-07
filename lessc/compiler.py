@@ -21,6 +21,9 @@ assetspec_cre = re.compile(r'^[a-z_][a-z0-9_]*:[^/]', re.IGNORECASE)
 import_cre    = re.compile(
   r'@import\s*(?:\((?P<options>[^)]*)\))?\s*(?P<qchar>["\'])(?P<uri>.*?)(?P=qchar)\s*;')
 
+utilprintwarning_cre = re.compile(
+  r'\(node:\d+\) DeprecationWarning: util.print is deprecated. Use console.log instead.')
+
 class LesscError(Exception): pass
 class AssetError(LesscError):
   def __init__(self, cause=None, *args, **kw):
@@ -129,6 +132,8 @@ class Compiler(object):
       [os.environ.get('LESSC', self.lessc_exec), '-x', '-'],
       stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     output, err = proc.communicate(data)
+    if err and utilprintwarning_cre.match(err.strip()):
+      err = None
     if err:
       raise CompileError(err)
     return output
