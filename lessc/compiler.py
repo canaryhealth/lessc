@@ -144,6 +144,19 @@ class Compiler(object):
       state['imported'] = []
     data = source.read()
     def replacer(match):
+      # TODO: *** hack alert *** this is embarrassing... this should
+      #       not be here. it *should* be done wherever the data
+      #       stream is actually being parsed. but currently, that is
+      #       in the external `lessc` node program. ugh. and this is
+      #       such a simplistic, error-prone implementation. i'm so
+      #       sorry. for example, it would incorrectly handle::
+      #          .f { background: url("https://foo"); } @import "bar";
+      #       fortunately, i expect that to be rare.
+      #       unless the source is already css-minified.
+      #       don't do that.
+      befline = match.string[ : match.start() ].rsplit('\n', 1)[-1]
+      if '//' in befline:
+        return ''
       options = match.group('options') or 'once'
       options = [i.strip().lower() for i in options.split(',')]
       for opt in options:
