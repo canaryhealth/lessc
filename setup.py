@@ -22,11 +22,12 @@ def read(*parts, **kw):
 test_dependencies = [
   'nose                 >= 1.3.0',
   'coverage             >= 3.5.3',
+  'fso                  >= 0.3.1',
 ]
 
 dependencies = [
-  'asset                >= 0.6.10',
-  'six                  >= 1.6.0',
+  'asset                >= 0.6.12',
+  'six                  >= 1.10.0',
 ]
 
 classifiers = [
