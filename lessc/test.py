@@ -11,6 +11,7 @@ import unittest
 
 import six
 import asset
+import fso
 
 from .compiler import Compiler, urijoin, CompileError, AssetError
 
@@ -42,6 +43,37 @@ class TestCompiler(unittest.TestCase):
   def test_invalid_import(self):
     with self.assertRaises(AssetError):
       Compiler().compile('@import "no-such-asset";\n')
+
+  #----------------------------------------------------------------------------
+  def test_commentedOutImport_simple(self):
+    with fso.push() as overlay:
+      with open('black.less', 'wb') as fp:
+        fp.write('.b { color: #000; }')
+      with open('white.less', 'wb') as fp:
+        fp.write('.w { color: #fff; }')
+      self.assertEqual(
+        Compiler().compile('''
+          @import "black.less";
+          // @import "no-such-asset";
+          @import "white.less";
+        '''),
+        '.b{color:#000;}\n.w{color:#fff;}\n')
+
+  #----------------------------------------------------------------------------
+  def test_commentedOutImport_interleaved(self):
+    with fso.push() as overlay:
+      with open('black.less', 'wb') as fp:
+        fp.write('.b { color: #000; }')
+      with open('white.less', 'wb') as fp:
+        fp.write('.w { color: #fff; }')
+      self.assertEqual(
+        Compiler().compile('''
+          // @import "no-such-asset";
+          @import "black.less";
+          .r { color: #f00; } // @import "another-bad-asset"; .g { color: #0f0; }
+          @import "white.less";
+        '''),
+        '.b{color:#000;}\n.r{color:#f00;}\n.w{color:#fff;}\n')
 
   #----------------------------------------------------------------------------
   def test_string(self):
@@ -133,6 +165,7 @@ class TestCompiler(unittest.TestCase):
     self.assertEqual(
       Compiler(resolver=resolver, loader=loader).compile('@import (less) "red.css";'),
       '.red{color:red;}\n')
+
 
 #------------------------------------------------------------------------------
 # end of $Id$
